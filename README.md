@@ -43,25 +43,25 @@ The flowchart below visually represents the game's logic:
 ```mermaid
 graph TD
   Start[Start Game] --> Init[Initialize Board and Variables]
-  Init --> GameLoop[Game Loop (Until Game Over)]
+  Init --> GameLoop[Game Loop - Until Game Over]
 
   GameLoop --> Display[Display Board]
   Display --> PlayerAction{Player Action}
 
-  PlayerAction -- Move --> ValidateMove[Validate Move]
-  ValidateMove -- Invalid --> GameLoop
-  ValidateMove -- Valid --> Update[Update Board and Save Move]
+  PlayerAction -- Make Move --> ValidateMove[Validate Move]
+  ValidateMove -- Invalid Move --> GameLoop
+  ValidateMove -- Valid Move --> Update[Update Board and Save Move]
   Update --> CheckWin[Check Win?]
 
-  CheckWin -- Yes --> Win[Announce Winner]
-  CheckWin -- No --> CheckDraw[Check Draw?]
-  CheckDraw -- Yes --> Draw[Announce Draw]
-  CheckDraw -- No --> Switch[Switch Player] --> GameLoop
+  CheckWin -- Win --> WinAction[Announce Winner]
+  CheckWin -- No Win --> CheckDraw[Check Draw?]
+  CheckDraw -- Draw --> DrawAction[Announce Draw]
+  CheckDraw -- No Draw --> Switch[Switch Player] --> GameLoop
 
   PlayerAction -- Restart --> Restart[Restart Game] --> Init
   PlayerAction -- Quit --> End[Exit Game]
 
-  Win --> PlayAgain[Play Again?]
-  Draw --> PlayAgain
+  WinAction --> PlayAgain[Play Again?]
+  DrawAction --> PlayAgain
   PlayAgain -- Yes --> Init
   PlayAgain -- No --> End
