@@ -1,42 +1,43 @@
 tic_tac_toe_game:
-  description: "Complete Tic Tac Toe game design with pseudocode, implementation, flowchart, and JSON state."
+  description: "Full Tic Tac Toe game design with pseudocode, Python implementation, flowchart, and JSON state."
 
-  # 🧠 Pseudocode Logic
   pseudocode:
     description: "Step-by-step logic for Tic Tac Toe, including win, draw, and restart."
     steps:
-      - Initialize game:
+      - Setup:
           actions:
-            - Create a 3x3 empty board
+            - Initialize 3x3 board (empty)
             - Set current player to 'X'
             - Set game_over to False
-            - Initialize move_history list
-      - Main game loop:
+            - Set winner to None
+            - Initialize move_history as empty list
+      - Main Game Loop (until game_over is True):
           actions:
-            - Display the board
-            - Prompt player for action:
-                - Move
-                - Restart
-                - Exit
-            - If move:
-                - Validate
-                - If valid:
-                    - Apply move
-                    - Add to move_history
-                    - Check win
-                    - Check draw
-                    - If not over → switch player
-                - If invalid: retry
-            - If restart:
-                - Reset board and variables
-            - If exit:
-                - Terminate game
-      - End game:
+            - Display current board
+            - Prompt current player for action:
+                options:
+                  - Make Move
+                  - Restart Game
+                  - Exit Game
+            - If Make Move:
+                - Parse and validate coordinates
+                - If move is valid:
+                    - Update board
+                    - Append to move history
+                    - Check for win → if win: set winner and game_over
+                    - Else check for draw → if draw: set game_over
+                    - If no win/draw: switch player
+                - Else: notify invalid move, retry
+            - If Restart Game:
+                - Reset board, player, and variables
+            - If Exit Game:
+                - Set game_over = True
+      - After Game Ends:
           actions:
+            - Display final board
             - Announce winner or draw
-            - Offer restart or exit
+            - Ask to play again → if yes: restart, else: exit
 
-  # 🐍 Python Code Implementation
   python_code:
     description: "Python implementation of Tic Tac Toe."
     snippet: |
@@ -51,9 +52,11 @@ tic_tac_toe_game:
               self.move_history = []
 
           def display_board(self):
-              for row in self.board:
+              print("\nCurrent Board:")
+              for i, row in enumerate(self.board):
                   print(' | '.join(row))
-                  print('-' * 5)
+                  if i < self.SIZE - 1:
+                      print('-' * 5)
 
           def is_valid_move(self, x, y):
               return 0 <= x < self.SIZE and 0 <= y < self.SIZE and self.board[x][y] == ' '
@@ -69,19 +72,20 @@ tic_tac_toe_game:
               self.current_player = 'O' if self.current_player == 'X' else 'X'
 
           def check_win(self):
-              # Check rows, columns, and diagonals
+              lines = []
+
               for i in range(self.SIZE):
-                  if all(self.board[i][j] == self.current_player for j in range(self.SIZE)) or \
-                     all(self.board[j][i] == self.current_player for j in range(self.SIZE)):
+                  lines.append(self.board[i])
+                  lines.append([self.board[j][i] for j in range(self.SIZE)])
+
+              lines.append([self.board[i][i] for i in range(self.SIZE)])
+              lines.append([self.board[i][self.SIZE - i - 1] for i in range(self.SIZE)])
+
+              for line in lines:
+                  if all(cell == self.current_player for cell in line):
                       self.winner = self.current_player
                       self.game_over = True
                       return True
-
-              if all(self.board[i][i] == self.current_player for i in range(self.SIZE)) or \
-                 all(self.board[i][self.SIZE - i - 1] == self.current_player for i in range(self.SIZE)):
-                  self.winner = self.current_player
-                  self.game_over = True
-                  return True
               return False
 
           def is_draw(self):
@@ -92,61 +96,84 @@ tic_tac_toe_game:
 
           def restart_game(self):
               self.__init__()
-              print("Game restarted.")
+              print("Game restarted.\n")
+
+          def process_turn(self):
+              self.display_board()
+              print(f"Player {self.current_player}'s turn.")
+              move_input = input("Enter row and column (e.g., 1 2), or 'r' to restart, 'q' to quit: ").strip().lower()
+
+              if move_input == 'r':
+                  self.restart_game()
+                  return 'restart'
+              elif move_input == 'q':
+                  self.game_over = True
+                  return 'quit'
+
+              try:
+                  x, y = map(int, move_input.split())
+                  x -= 1
+                  y -= 1
+              except ValueError:
+                  print("❌ Invalid input format.")
+                  return
+
+              if self.make_move(x, y):
+                  if self.check_win():
+                      self.display_board()
+                      print(f"🎉 Player {self.current_player} wins!")
+                  elif self.is_draw():
+                      self.display_board()
+                      print("🤝 It's a draw!")
+                  else:
+                      self.switch_player()
+              else:
+                  print("❌ Invalid move. Try again.")
 
           def play(self):
-              while not self.game_over:
-                  self.display_board()
-                  print(f"Player {self.current_player}'s turn.")
-                  try:
-                      x, y = map(int, input("Enter row and column (e.g., 1 2): ").split())
-                  except ValueError:
-                      print("Invalid input.")
-                      continue
+              while True:
+                  while not self.game_over:
+                      self.process_turn()
 
-                  if self.make_move(x, y):
-                      if self.check_win():
-                          self.display_board()
-                          print(f"Player {self.current_player} wins!")
-                          break
-                      elif self.is_draw():
-                          self.display_board()
-                          print("It's a draw!")
-                          break
-                      self.switch_player()
+                  again = input("Play again? (y/n): ").strip().lower()
+                  if again.startswith('y'):
+                      self.restart_game()
                   else:
-                      print("Invalid move.")
-
-              if input("Play again? (y/n): ").lower().startswith('y'):
-                  self.restart_game()
-                  self.play()
+                      print("👋 Thanks for playing!")
+                      break
 
       if __name__ == "__main__":
           game = TicTacToe()
           game.play()
 
-  # 🔁 Flowchart (Mermaid Syntax)
   flowchart:
-    description: "Game flow logic for Tic Tac Toe."
+    description: "Game flow logic for Tic Tac Toe in Mermaid.js syntax."
     diagram: |
       graph TD
-        Start[Start Game] --> Init[Initialize Game]
-        Init --> Loop[Main Game Loop]
-        Loop --> Board[Display Board]
-        Board --> Action{Choose Action}
-        Action -- Move --> Validate[Validate Move]
-        Validate -- Invalid --> Loop
-        Validate -- Valid --> ApplyMove[Apply Move]
-        ApplyMove --> CheckWin[Check Win]
-        CheckWin -- Yes --> EndWin[Declare Winner]
-        CheckWin -- No --> CheckDraw[Check Draw]
-        CheckDraw -- Yes --> EndDraw[Declare Draw]
-        CheckDraw -- No --> Switch[Switch Player] --> Loop
-        Action -- Restart --> RestartGame[Restart Game] --> Loop
-        EndWin --> End[Game Over]
-        EndDraw --> End
+        Start[Start Game] --> Init[Initialize Board and Variables]
+        Init --> GameLoop[Game Loop (Until Game Over)]
 
-  # 🧾 Example JSON Game State
+        GameLoop --> Display[Display Board]
+        Display --> PlayerAction{Player Action}
+
+        PlayerAction -- Move --> ValidateMove[Validate Move]
+        ValidateMove -- Invalid --> GameLoop
+        ValidateMove -- Valid --> Update[Update Board and Save Move]
+        Update --> CheckWin[Check Win?]
+
+        CheckWin -- Yes --> Win[Announce Winner]
+        CheckWin -- No --> CheckDraw[Check Draw?]
+        CheckDraw -- Yes --> Draw[Announce Draw]
+        CheckDraw -- No --> Switch[Switch Player] --> GameLoop
+
+        PlayerAction -- Restart --> Restart[Restart Game] --> Init
+        PlayerAction -- Quit --> End[Exit Game]
+
+        Win --> PlayAgain[Play Again?]
+        Draw --> PlayAgain
+        PlayAgain -- Yes --> Init
+        PlayAgain -- No --> End
+
   json_example:
     description: "Example serialized game state after a few moves."
     state: |
@@ -159,5 +186,11 @@ tic_tac_toe_game:
         "current_player": "O",
         "game_over": false,
         "winner": null,
-        "move_history": [[0,0], [0,1], [1,1], [2,0], [2,2]],
+        "move_history": [
+          [0, 0],
+          [0, 1],
+          [1, 1],
+          [2, 0],
+          [2, 2]
+        ]
       }
