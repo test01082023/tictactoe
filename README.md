@@ -1,21 +1,28 @@
-# Tic Tac Toe Game Design
+ # Tic Tac Toe Game Design
 
-This repository contains a complete **Tic Tac Toe** game design captured entirely within a single YAML file. The file includes pseudocode, Python implementation, flowchart, and an example of serialized game state. It's designed to provide a cohesive resource for learning and building Tic Tac Toe from scratch.
+This repository provides a comprehensive design for **Tic Tac Toe**, encapsulated entirely within a single YAML file. The file integrates all essential components, from pseudocode and Python implementation to flowchart visualization and example game states, offering both clarity and functionality.
 
 ---
 
-## Overview
+## What's Inside?
 
-### What's Inside?
-1. **Pseudocode**: Step-by-step explanation of the game's logic and workflow.
-2. **Python Implementation**: Full code for the Tic Tac Toe game, including win/draw checks, move validation, and restarting functionality.
-3. **Flowchart**: Visual game flow representation using Mermaid syntax for clarity.
-4. **JSON Example State**: Demonstrates how game states are serialized after a few moves.
+### 1. **Pseudocode**
+Step-by-step instructions outlining the game logic:
+- Initialization of the board and game variables.
+- A structured loop for gameplay, including win/draw checks and actions like restart or quit.
 
-### Why YAML?
-- Combines planning, implementation, and visualization into one format.
-- Easy to modify, share, and adapt for different projects.
-- Suitable for educational purposes, helping learners understand game development end-to-end.
+### 2. **Python Implementation**
+Complete game functionality implemented in Python:
+- Player interaction with move validation.
+- Automated checks for win and draw conditions.
+- Features such as restarting the game and quitting during gameplay.
+
+### 3. **Flowchart**
+Visual representation of the game's workflow using **Mermaid syntax**:
+- Illustrates key steps such as validating moves, checking for win/draw, switching players, and ending the game.
+
+### 4. **Example JSON Game State**
+Provides a snapshot of the game's state after several moves to demonstrate serialization.
 
 ---
 
@@ -23,16 +30,16 @@ This repository contains a complete **Tic Tac Toe** game design captured entirel
 
 ### 🔢 Game Logic
 - **Board Size**: Standard 3x3 grid.
-- **Win Condition**: Align 3 consecutive marks in a row, column, or diagonal.
-- **Draw Detection**: Declares a draw if no spaces remain.
+- **Win Condition**: Place 3 consecutive marks in a row, column, or diagonal to win.
+- **Draw Detection**: Declares a draw if no spaces remain and no player has won.
 
 ### 🔁 Key Functionalities
-- **Restart Game**: Reset the board and start fresh.
-- **Player Switch**: Alternate turns between 'X' and 'O'.
-- **Win and Draw Checks**: Dynamically detect outcomes and end the game appropriately.
+- **Restart Game**: Reset all variables to start fresh.
+- **Switch Player**: Automatically alternates turns between 'X' and 'O'.
+- **Game Ending**: Checks for win/draw conditions to conclude the match.
 
-### 📊 Game Flow
-The Mermaid flowchart illustrates the game's logic in detail:
+### 📊 Flowchart
+The flowchart below visually represents the game's logic:
 ```mermaid
 graph TD
   Start[Start Game] --> Init[Initialize Board and Variables]
